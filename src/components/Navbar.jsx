@@ -1,17 +1,40 @@
-import { NavLink } from "react-router-dom";
+import { useContext } from "react";
+import { Link, NavLink } from "react-router-dom";
+import { AuthContext } from "../providers/AuthProvider";
 
 const Navbar = () => {
+    const { user, signOutUser } = useContext(AuthContext);
+    console.log(user);
+    const handleSignOut = () => {
+        signOutUser()
+            .then(() => {
+                console.log("user sign out successfully");
+            })
+            .catch((error) => console.log("Error", error.message));
+    };
+
     const links = (
         <>
             <li>
-               <NavLink to='/'>Home</NavLink>
+                <NavLink to="/">Home</NavLink>
             </li>
             <li>
-               <NavLink to='/login'>Login</NavLink>
+                <NavLink to="/login">Login</NavLink>
             </li>
             <li>
-               <NavLink to='/register'>Register</NavLink>
+                <NavLink to="/register">Register</NavLink>
             </li>
+            {user && (
+                <>
+                    <li>
+                        <NavLink to="/order">Order</NavLink>
+                        
+                    </li>
+                    <li>
+                    <NavLink to="/profile">Profile</NavLink>
+                    </li>
+                </>
+            )}
         </>
     );
     return (
@@ -48,14 +71,19 @@ const Navbar = () => {
                 <a className="btn btn-ghost text-xl">daisyUI</a>
             </div>
             <div className="navbar-center hidden lg:flex">
-                <ul className="menu menu-horizontal px-1">
-                   {
-                    links
-                   }
-                </ul>
+                <ul className="menu menu-horizontal px-1">{links}</ul>
             </div>
             <div className="navbar-end">
-                <a className="btn">Button</a>
+                {user ? (
+                    <>
+                        <span>{user.email}</span>
+                        <a className="btn" onClick={handleSignOut}>
+                            Sign Out
+                        </a>
+                    </>
+                ) : (
+                    <Link to="/login">Login</Link>
+                )}
             </div>
         </div>
     );
